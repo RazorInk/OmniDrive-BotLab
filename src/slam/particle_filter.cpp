@@ -3,6 +3,15 @@
 #include <lcmtypes/pose_xyt_t.hpp>
 #include <cassert>
 
+//Pose struct
+// struct pose_xyt_t
+// {
+//     int64_t utime;
+    
+//     float x;
+//     float y;
+//     float theta;
+// }
 
 ParticleFilter::ParticleFilter(int numParticles)
 : kNumParticles_ (numParticles)
@@ -15,8 +24,9 @@ ParticleFilter::ParticleFilter(int numParticles)
 void ParticleFilter::initializeFilterAtPose(const pose_xyt_t& pose)
 {
     ///////////// TODO: Implement your method for initializing the particles in the particle filter /////////////////
-}
 
+    //may want to update pose using LCM
+}
 
 pose_xyt_t ParticleFilter::updateFilter(const pose_xyt_t&      odometry,
                                         const lidar_t& laser,
