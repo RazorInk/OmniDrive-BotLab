@@ -3,6 +3,7 @@
 #include <lcmtypes/pose_xyt_t.hpp>
 #include <cassert>
 
+
 //Pose struct
 // struct pose_xyt_t
 // {
@@ -24,8 +25,32 @@ ParticleFilter::ParticleFilter(int numParticles)
 void ParticleFilter::initializeFilterAtPose(const pose_xyt_t& pose)
 {
     ///////////// TODO: Implement your method for initializing the particles in the particle filter /////////////////
+    // create an N number of particles in the posterior vector with random x, y and z values
+    // Distribute the particles based on the initial pose
 
-    //may want to update pose using LCM
+
+    //first step, initialize particles and particle vector
+
+    std::vector<particle_t> initialDistribution;
+    //init random seed based on time
+    srand(time(NULL));
+    for (int i = 0; i < kNumParticles_; i++)
+    {
+        particle_t particle;
+        particle.parent_pose.x = rand() % 1000;
+        particle.parent_pose.y =  rand() % 1000;
+        particle.parent_pose.theta =  rand() % 1000;
+
+        //is this the best way to consider the prior pose?
+        particle.pose = pose;
+        particle.weight = 1 / kNumParticles_;
+
+        //add to new particle vector
+        initialDistribution.push_back(particle);
+    }
+
+    // assign initial distribution to private member variable
+    posterior_ = initialDistribution;
 }
 
 pose_xyt_t ParticleFilter::updateFilter(const pose_xyt_t&      odometry,
@@ -70,6 +95,8 @@ std::vector<particle_t> ParticleFilter::resamplePosteriorDistribution(void)
     //////////// TODO: Implement your algorithm for resampling from the posterior distribution ///////////////////
     
     std::vector<particle_t> prior;
+
+
     return prior;
 }
 
