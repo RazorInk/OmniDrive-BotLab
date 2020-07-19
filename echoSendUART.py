@@ -11,17 +11,20 @@ i = 0
 
 f = open("input.txt", "w")
 
-numTests = 1000
+numTests = 10000
 
 for i in range(numTests):
-	time.sleep(0.005)
+	time.sleep(0.002)
 	a = os.urandom(64)
 	print(a.hex())
-	f.write(a.hex()+"\n")
+	# f.write(a.hex()+"\n")
+	for j in range(64):
+		f.write(hex(a[j])+" ")
+	f.write("\n")
 	ser.write(a)
 
-	if (i % 100) == 0 :
-		time.sleep(0.25)
+	# if (i % 100) == 0 :
+		# time.sleep(0.25)
 
 
 # while 1:

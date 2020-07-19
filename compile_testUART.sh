@@ -1,1 +1,1 @@
-g++ -o  testUART testUART.cpp -lwiringPi
+g++ -o  testUART customSerial.c testUART.cpp 
