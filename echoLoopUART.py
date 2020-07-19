@@ -2,26 +2,26 @@ import serial
 import time
 import os
 
-ser = serial.Serial("/dev/serial0",baudrate=512000,timeout=0.005) 
+# ser = serial.Serial("/dev/serial0",baudrate=115200,timeout=1) 
+ser = serial.Serial("/dev/serial0",baudrate=512000,timeout=0.02) 
 if ser.isOpen():
 	print(ser.name + ' is open...')
-writeData1 = [0xFA,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x0F]
-writeData2 = [0x0F,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xFF]
-i = 0
-
-f = open("input.txt", "w")
-
-numTests = 1000
+fails = 0
+numTests = 10000
 
 for i in range(numTests):
-	time.sleep(0.005)
+	print(i)
 	a = os.urandom(64)
-	print(a.hex())
-	f.write(a.hex()+"\n")
 	ser.write(a)
+	# time.sleep(0.3)
+	b = ser.read(64)
+	# print(a.hex())
+	# print(b.hex())
+	if a != b:
+		fails = fails + 1
 
-	if (i % 100) == 0 :
-		time.sleep(0.25)
+print("failure rate: " + str(fails) + "/" + str(numTests))
+
 
 
 # while 1:
