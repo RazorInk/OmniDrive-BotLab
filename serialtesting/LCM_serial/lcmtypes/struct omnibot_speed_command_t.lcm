@@ -1,0 +1,8 @@
+struct omnibot_speed_command_t
+
+{
+    int64_t  timestamp;
+    float v_x;
+    float v_y;
+    float w_z;
+}
