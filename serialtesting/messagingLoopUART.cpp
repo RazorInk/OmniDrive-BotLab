@@ -14,6 +14,19 @@
 
 extern int errno;
 
+Messaging::Message temp;
+
+void sendMessageUART(Messaging::Message* msg_buf) {
+	int fd = serialOpen("/dev/serial0", 512000);
+	write (fd, (uint8_t*)msg_buf, 64);
+	return;
+}
+
+void messageReaction(Messaging::Message &msg) {
+	temp = msg;
+	return;
+}
+
 int main (int argc, char *argv[])
 {
 	if (argc != 2) {
@@ -42,11 +55,14 @@ int main (int argc, char *argv[])
 
 	// std::ofstream outfile;
   // outfile.open("cpp_output.txt");
+
+	Messaging OmnibotMessaging(&sendMessageUART, &messageReaction);
+
 	uint8_t sdata_in[64];
 	uint8_t sdata_out[64];
 	uint8_t x;
 	int j = 0;
-  uint8_t byte;
+  int8_t byte;
 
 	long long int chunk_in;
 	long long int chunk_out;
@@ -56,31 +72,25 @@ int main (int argc, char *argv[])
 
   while (j < numTests)
   {
-		for (int i = 0; i < 64; ++i) {
-			srand(time(NULL)); //i.e. non-associated value such as time (time(NULL) from ctime/time.h)
-			byte = rand() & 0xFF;
-			sdata_in[i] = byte;
-		}
-		write (fd_used, sdata_in, 64);
-		// sdata_in[2] = 0;
+		srand(j); //i.e. non-associated value such as time (time(NULL) from ctime/time.h)
+		byte = rand() & 0xFF;
+		pi2nu msg_test = {byte, byte, byte, byte};
+		Messaging::Message msg_to_send;
+		OmnibotMessaging.generateMessage(&msg_to_send, msg_test);
+		OmnibotMessaging.sendMessage(&msg_to_send);
 
 		if (serialDataAvail(fd_used) == -1) {std::cerr << errno << std::endl;;}
 
 		while (serialDataAvail(fd_used) < 64) {}
-
 		read (fd_used, sdata_out, 64);
-		std::cout << std::dec << j << std::endl;
+		OmnibotMessaging.rxMessageSequence(sdata_out);
+		if(msg_to_send.msgHash != temp.msgHash) numFails++;
+		std::cout << std::dec << j << " " << std::hex << msg_to_send.msgHash
+		          << " " << temp.msgHash << std::endl;
 		++j;
-		// for (int i = 0; i < 64; ++i) if (sdata_out[i] != sdata_in[i]) numFails++; break;
-		for (int i = 0; i < 8; ++i) {
-			chunk_in = *((long long int*)(sdata_in + i*8));
-			chunk_out = *((long long int*)(sdata_out + i*8));
-			if ((chunk_in^chunk_out) > 0) numFails++; break;
-		}
-    // std::cout << '\n';
   }
 
-	std::cout << "\nfailure rate: " << numFails << "/" << numTests << std::endl;
+	std::cout << std::dec << "\nfailure rate: " << numFails << "/" << numTests << std::endl;
 
   return 0 ;
 }
