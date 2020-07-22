@@ -53,7 +53,7 @@ public:
 	omnibot_speed_command_t updateCommand(void)
 	{
 		const float kSlowdownDist = 0.2f; //0.26f;
-		const float kDesiredSpeed = 0.5f; //0.55f;
+		const float kDesiredSpeed = 5.0f; //0.55f;
 		const float kMinSpeed = 0.02f; //0.4f;
 		const float kTurnSpeed = 0.7f; //0.3f;
 
@@ -67,11 +67,11 @@ public:
 			std::cout << "TARGET REACHED\n";
 			bool haveTarget = assignNextTarget();
 
-			if(!haveTarget)
-			{
+			if(!haveTarget) {
 					std::cout << "COMPLETED PATH!\n";
 			}
 		}
+
 		if(!targets_.empty()) {
 			std::cout << "NOT EMPTY\n";
 			// Use feedback based on heading error for line-of-sight vector pointing to the target.
@@ -120,8 +120,8 @@ public:
 			v_x = std::max(0.0f, v_x);
 	    v_y = std::max(0.0f, v_y);
 
-			cmd.v_x = clamp_speed(v_x);
-	    cmd.v_y = clamp_speed(v_y);
+			// cmd.v_x = clamp_speed(v_x);
+	    // cmd.v_y = clamp_speed(v_y);
 		}
 		return cmd;
 	}
@@ -225,11 +225,11 @@ int main(int argc, char** argv) {
 	lcmInstance.subscribe("CONTROLLER_PATH", &MotionController::handlePath, &controller);
 
 	while(true) {
-			lcmInstance.handleTimeout(50);  // update at 20Hz minimum
+		lcmInstance.handleTimeout(50);  // update at 20Hz minimum
 
-			//if(controller.timesync_initialized()){
-			omnibot_speed_command_t cmd = controller.updateCommand();
-			lcmInstance.publish("OMNIBOT_SPEED_COMMAND", &cmd);
+		//if(controller.timesync_initialized()){
+		omnibot_speed_command_t cmd = controller.updateCommand();
+		lcmInstance.publish("OMNIBOT_SPEED_COMMAND", &cmd);
 			
 	}
 
