@@ -79,6 +79,8 @@ int main (int argc, char *argv[])
 		OmnibotMessaging.generateMessage(&msg_to_send, msg_test);
 		OmnibotMessaging.sendMessage(&msg_to_send);
 
+		// std::cout << "here" << std::endl;
+
 		if (serialDataAvail(fd_used) == -1) {std::cerr << errno << std::endl;;}
 
 		while (serialDataAvail(fd_used) < 64) {}

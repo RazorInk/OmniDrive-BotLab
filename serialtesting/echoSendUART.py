@@ -11,7 +11,7 @@ i = 0
 
 f = open("input.txt", "w")
 
-numTests = 10000
+numTests = 1
 
 for i in range(numTests):
 	time.sleep(0.002)
