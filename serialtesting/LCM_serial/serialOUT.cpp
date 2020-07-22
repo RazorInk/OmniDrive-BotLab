@@ -41,6 +41,7 @@ class speedCommandHandler{
                             const std::string & chan,
                             const omnibot_speed_command_t *msg){
 		std::cout<<"Hi\n";
+		std::cout<< msg->v_x << ' '  << msg->v_y << ' ' << msg->w_z << '\n';
 		float vel_a = -20*msg->v_y - 2.68*msg->w_z;
 		float vel_b = 17.32*msg->v_x + 10*msg->v_y - 2.68*msg->w_z;
 		float vel_c = -17.32*msg->v_x + 10*msg->v_y - 2.68*msg->w_z;

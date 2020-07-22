@@ -88,7 +88,7 @@ public:
 	    float turnspeed = kTurnSpeed;
 			std::cout << "start calculatiing\n";
 	    //if the error is small, vary the turnspeed linearly with the error
-			if(std::abs(error) < 0.7) turnspeed = -0.35 + 4 * std::abs(error);
+			if(std::abs(error) < 0.7) turnspeed = 4 * std::abs(error);
 			turnspeed = std::min(turnspeed, kTurnSpeed);//don't turn faster than the desired turnspeed
 
 			// Turn left if the target is to the left
@@ -106,9 +106,9 @@ public:
 	    float dX = target.x - pose.x;
 	    float dY = target.y - pose.y;
 
-			float dx = dX * cos(pose.psi) + dY * sin(pose.psi);
-			float dy = -dX * sin(pose.psi) + dY * cos(pose.psi);
-			float v_x = kDesiredSpeed;
+	    float dx = dX * cos(pose.psi) + dY * sin(pose.psi);
+	    float dy = -dX * sin(pose.psi) + dY * cos(pose.psi);
+	    float v_x = kDesiredSpeed;
 	    float v_y = kDesiredSpeed;
 
 	    if(dx < kSlowdownDist) {
@@ -117,10 +117,12 @@ public:
 
 	    if(dy < kSlowdownDist)
 			v_y = kMinSpeed + sqrt(dy);
-			v_x = std::max(0.0f, v_x);
-	    v_y = std::max(0.0f, v_y);
+	    cmd.v_x = v_x;
+	    cmd.v_y = v_y;
+	    //v_x = std::max(0.0f, v_x);
+	    //v_y = std::max(0.0f, v_y);
 
-			// cmd.v_x = clamp_speed(v_x);
+	    // cmd.v_x = clamp_speed(v_x);
 	    // cmd.v_y = clamp_speed(v_y);
 		}
 		return cmd;
