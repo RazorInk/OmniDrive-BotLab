@@ -6,21 +6,30 @@
 
 #include <lcm/lcm_coretypes.h>
 
-#ifndef __omnibot_speed_command_t_hpp__
-#define __omnibot_speed_command_t_hpp__
+#ifndef __robot_path_t_hpp__
+#define __robot_path_t_hpp__
+
+#include <vector>
+#include "pose_xyt_t.hpp"
 
 
-
-class omnibot_speed_command_t
+/**
+ * robot_path_t defines a path through the environment as a sequence of poses. The first pose in the sequence is the
+ * starting pose of the planned path. The final pose is the goal pose. Each pose is an (x, y, theta) for the robot to
+ * reach before moving on to the next pose in the path. The theta associated with each pose points to the next
+ * pose in the sequence. Navigation of the path can consist of straight-line driving to the (x, y) position and the
+ * turning in-place to the theta orientation, then repeating until the final goal pose has been reached.
+ *
+ * A path length of 1 contains just the start pose and indicates that no path could be found to the goal.
+ */
+class robot_path_t
 {
     public:
         int64_t    utime;
 
-        float      v_x;
+        int32_t    path_length;
 
-        float      v_y;
-
-        float      w_z;
+        std::vector< pose_xyt_t > path;
 
     public:
         /**
@@ -58,7 +67,7 @@ class omnibot_speed_command_t
         inline static int64_t getHash();
 
         /**
-         * Returns "omnibot_speed_command_t"
+         * Returns "robot_path_t"
          */
         inline static const char* getTypeName();
 
@@ -69,7 +78,7 @@ class omnibot_speed_command_t
         inline static uint64_t _computeHash(const __lcm_hash_ptr *p);
 };
 
-int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
+int robot_path_t::encode(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
     int64_t hash = (int64_t)getHash();
@@ -83,7 +92,7 @@ int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
     return pos;
 }
 
-int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
+int robot_path_t::decode(const void *buf, int offset, int maxlen)
 {
     int pos = 0, thislen;
 
@@ -98,73 +107,81 @@ int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
     return pos;
 }
 
-int omnibot_speed_command_t::getEncodedSize() const
+int robot_path_t::getEncodedSize() const
 {
     return 8 + _getEncodedSizeNoHash();
 }
 
-int64_t omnibot_speed_command_t::getHash()
+int64_t robot_path_t::getHash()
 {
     static int64_t hash = _computeHash(NULL);
     return hash;
 }
 
-const char* omnibot_speed_command_t::getTypeName()
+const char* robot_path_t::getTypeName()
 {
-    return "omnibot_speed_command_t";
+    return "robot_path_t";
 }
 
-int omnibot_speed_command_t::_encodeNoHash(void *buf, int offset, int maxlen) const
+int robot_path_t::_encodeNoHash(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
+    tlen = __int32_t_encode_array(buf, offset + pos, maxlen - pos, &this->path_length, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
-
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
+    for (int a0 = 0; a0 < this->path_length; a0++) {
+        tlen = this->path[a0]._encodeNoHash(buf, offset + pos, maxlen - pos);
+        if(tlen < 0) return tlen; else pos += tlen;
+    }
 
     return pos;
 }
 
-int omnibot_speed_command_t::_decodeNoHash(const void *buf, int offset, int maxlen)
+int robot_path_t::_decodeNoHash(const void *buf, int offset, int maxlen)
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
+    tlen = __int32_t_decode_array(buf, offset + pos, maxlen - pos, &this->path_length, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
-
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
+    this->path.resize(this->path_length);
+    for (int a0 = 0; a0 < this->path_length; a0++) {
+        tlen = this->path[a0]._decodeNoHash(buf, offset + pos, maxlen - pos);
+        if(tlen < 0) return tlen; else pos += tlen;
+    }
 
     return pos;
 }
 
-int omnibot_speed_command_t::_getEncodedSizeNoHash() const
+int robot_path_t::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __int32_t_encoded_array_size(NULL, 1);
+    for (int a0 = 0; a0 < this->path_length; a0++) {
+        enc_size += this->path[a0]._getEncodedSizeNoHash();
+    }
     return enc_size;
 }
 
-uint64_t omnibot_speed_command_t::_computeHash(const __lcm_hash_ptr *)
+uint64_t robot_path_t::_computeHash(const __lcm_hash_ptr *p)
 {
-    uint64_t hash = 0x6b38941a115575feLL;
+    const __lcm_hash_ptr *fp;
+    for(fp = p; fp != NULL; fp = fp->parent)
+        if(fp->v == robot_path_t::getHash)
+            return 0;
+    const __lcm_hash_ptr cp = { p, (void*)robot_path_t::getHash };
+
+    uint64_t hash = 0xd8a57fd0b3392990LL +
+         pose_xyt_t::_computeHash(&cp);
+
     return (hash<<1) + ((hash>>63)&1);
 }
 

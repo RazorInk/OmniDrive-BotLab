@@ -6,15 +6,21 @@
 
 #include <lcm/lcm_coretypes.h>
 
-#ifndef __omnibot_speed_command_t_hpp__
-#define __omnibot_speed_command_t_hpp__
+#ifndef __odometry_t_hpp__
+#define __odometry_t_hpp__
 
 
 
-class omnibot_speed_command_t
+class odometry_t
 {
     public:
         int64_t    utime;
+
+        float      x;
+
+        float      y;
+
+        float      psi;
 
         float      v_x;
 
@@ -58,7 +64,7 @@ class omnibot_speed_command_t
         inline static int64_t getHash();
 
         /**
-         * Returns "omnibot_speed_command_t"
+         * Returns "odometry_t"
          */
         inline static const char* getTypeName();
 
@@ -69,7 +75,7 @@ class omnibot_speed_command_t
         inline static uint64_t _computeHash(const __lcm_hash_ptr *p);
 };
 
-int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
+int odometry_t::encode(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
     int64_t hash = (int64_t)getHash();
@@ -83,7 +89,7 @@ int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
     return pos;
 }
 
-int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
+int odometry_t::decode(const void *buf, int offset, int maxlen)
 {
     int pos = 0, thislen;
 
@@ -98,27 +104,36 @@ int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
     return pos;
 }
 
-int omnibot_speed_command_t::getEncodedSize() const
+int odometry_t::getEncodedSize() const
 {
     return 8 + _getEncodedSizeNoHash();
 }
 
-int64_t omnibot_speed_command_t::getHash()
+int64_t odometry_t::getHash()
 {
     static int64_t hash = _computeHash(NULL);
     return hash;
 }
 
-const char* omnibot_speed_command_t::getTypeName()
+const char* odometry_t::getTypeName()
 {
-    return "omnibot_speed_command_t";
+    return "odometry_t";
 }
 
-int omnibot_speed_command_t::_encodeNoHash(void *buf, int offset, int maxlen) const
+int odometry_t::_encodeNoHash(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->x, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->y, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->psi, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
@@ -133,11 +148,20 @@ int omnibot_speed_command_t::_encodeNoHash(void *buf, int offset, int maxlen) co
     return pos;
 }
 
-int omnibot_speed_command_t::_decodeNoHash(const void *buf, int offset, int maxlen)
+int odometry_t::_decodeNoHash(const void *buf, int offset, int maxlen)
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->x, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->y, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->psi, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
@@ -152,19 +176,22 @@ int omnibot_speed_command_t::_decodeNoHash(const void *buf, int offset, int maxl
     return pos;
 }
 
-int omnibot_speed_command_t::_getEncodedSizeNoHash() const
+int odometry_t::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __float_encoded_array_size(NULL, 1);
     return enc_size;
 }
 
-uint64_t omnibot_speed_command_t::_computeHash(const __lcm_hash_ptr *)
+uint64_t odometry_t::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0x6b38941a115575feLL;
+    uint64_t hash = 0x912e894a83e88abaLL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

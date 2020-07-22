@@ -1,0 +1,8 @@
+struct omnibot_encoder_t
+{
+    int64_t utime;
+
+    int16_t a_delta;
+    int16_t b_delta;
+    int16_t c_delta;
+}

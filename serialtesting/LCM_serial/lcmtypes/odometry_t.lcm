@@ -1,0 +1,12 @@
+struct odometry_t
+{
+    int64_t utime;
+
+    float x;
+    float y;
+    float psi;
+
+    float v_x;
+    float v_y;
+    float w_z;
+}

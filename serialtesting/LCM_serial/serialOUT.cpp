@@ -45,7 +45,7 @@ class speedCommandHandler{
 		float vel_b = 17.32*msg->v_x + 10*msg->v_y - 2.68*msg->w_z;
 		float vel_c = -17.32*msg->v_x + 10*msg->v_y - 2.68*msg->w_z;
 		std::cout << vel_a << ' ' << vel_b << ' ' << vel_c << '\n';
-		pi2nu msg_test = {(int8_t)(vel_a/52.36*100), (int8_t)(vel_b/52.36*100), (int8_t)(vel_c/52.36*100), 0x00};
+		pi2nu msg_test = {(int8_t)(vel_a/52.36*127), (int8_t)(vel_b/52.36*127), (int8_t)(vel_c/52.36*127), 0x00};
 		printf("%d, %d, %d\n",(int8_t)(vel_a/52.36*100), (int8_t)(vel_b/52.36*100), (int8_t)(vel_c/52.36*100));
 		Messaging::Message msg_to_send;
 		OmnibotMessaging.generateMessage(&msg_to_send, msg_test);

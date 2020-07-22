@@ -18,7 +18,7 @@ extern "C" {
 typedef struct _omnibot_speed_command_t omnibot_speed_command_t;
 struct _omnibot_speed_command_t
 {
-    int64_t    timestamp;
+    int64_t    utime;
     float      v_x;
     float      v_y;
     float      w_z;

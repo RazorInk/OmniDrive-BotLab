@@ -6,21 +6,21 @@
 
 #include <lcm/lcm_coretypes.h>
 
-#ifndef __omnibot_speed_command_t_hpp__
-#define __omnibot_speed_command_t_hpp__
+#ifndef __omnibot_encoder_t_hpp__
+#define __omnibot_encoder_t_hpp__
 
 
 
-class omnibot_speed_command_t
+class omnibot_encoder_t
 {
     public:
         int64_t    utime;
 
-        float      v_x;
+        int16_t    a_delta;
 
-        float      v_y;
+        int16_t    b_delta;
 
-        float      w_z;
+        int16_t    c_delta;
 
     public:
         /**
@@ -58,7 +58,7 @@ class omnibot_speed_command_t
         inline static int64_t getHash();
 
         /**
-         * Returns "omnibot_speed_command_t"
+         * Returns "omnibot_encoder_t"
          */
         inline static const char* getTypeName();
 
@@ -69,7 +69,7 @@ class omnibot_speed_command_t
         inline static uint64_t _computeHash(const __lcm_hash_ptr *p);
 };
 
-int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
+int omnibot_encoder_t::encode(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
     int64_t hash = (int64_t)getHash();
@@ -83,7 +83,7 @@ int omnibot_speed_command_t::encode(void *buf, int offset, int maxlen) const
     return pos;
 }
 
-int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
+int omnibot_encoder_t::decode(const void *buf, int offset, int maxlen)
 {
     int pos = 0, thislen;
 
@@ -98,73 +98,73 @@ int omnibot_speed_command_t::decode(const void *buf, int offset, int maxlen)
     return pos;
 }
 
-int omnibot_speed_command_t::getEncodedSize() const
+int omnibot_encoder_t::getEncodedSize() const
 {
     return 8 + _getEncodedSizeNoHash();
 }
 
-int64_t omnibot_speed_command_t::getHash()
+int64_t omnibot_encoder_t::getHash()
 {
     static int64_t hash = _computeHash(NULL);
     return hash;
 }
 
-const char* omnibot_speed_command_t::getTypeName()
+const char* omnibot_encoder_t::getTypeName()
 {
-    return "omnibot_speed_command_t";
+    return "omnibot_encoder_t";
 }
 
-int omnibot_speed_command_t::_encodeNoHash(void *buf, int offset, int maxlen) const
+int omnibot_encoder_t::_encodeNoHash(void *buf, int offset, int maxlen) const
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
+    tlen = __int16_t_encode_array(buf, offset + pos, maxlen - pos, &this->a_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
+    tlen = __int16_t_encode_array(buf, offset + pos, maxlen - pos, &this->b_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
+    tlen = __int16_t_encode_array(buf, offset + pos, maxlen - pos, &this->c_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
 }
 
-int omnibot_speed_command_t::_decodeNoHash(const void *buf, int offset, int maxlen)
+int omnibot_encoder_t::_decodeNoHash(const void *buf, int offset, int maxlen)
 {
     int pos = 0, tlen;
 
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->utime, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
+    tlen = __int16_t_decode_array(buf, offset + pos, maxlen - pos, &this->a_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
+    tlen = __int16_t_decode_array(buf, offset + pos, maxlen - pos, &this->b_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
+    tlen = __int16_t_decode_array(buf, offset + pos, maxlen - pos, &this->c_delta, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
 }
 
-int omnibot_speed_command_t::_getEncodedSizeNoHash() const
+int omnibot_encoder_t::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __int16_t_encoded_array_size(NULL, 1);
+    enc_size += __int16_t_encoded_array_size(NULL, 1);
+    enc_size += __int16_t_encoded_array_size(NULL, 1);
     return enc_size;
 }
 
-uint64_t omnibot_speed_command_t::_computeHash(const __lcm_hash_ptr *)
+uint64_t omnibot_encoder_t::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0x6b38941a115575feLL;
+    uint64_t hash = 0x6f4ca3a8dff6cca5LL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

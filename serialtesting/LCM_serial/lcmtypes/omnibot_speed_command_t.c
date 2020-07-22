@@ -21,7 +21,7 @@ uint64_t __omnibot_speed_command_t_hash_recursive(const __lcm_hash_ptr *p)
     cp.v = (void*)__omnibot_speed_command_t_get_hash;
     (void) cp;
 
-    uint64_t hash = (uint64_t)0x3c5b5136cf7b636aLL
+    uint64_t hash = (uint64_t)0x6b38941a115575feLL
          + __int64_t_hash_recursive(&cp)
          + __float_hash_recursive(&cp)
          + __float_hash_recursive(&cp)
@@ -48,7 +48,7 @@ int __omnibot_speed_command_t_encode_array(void *buf, int offset, int maxlen, co
 
     for (element = 0; element < elements; element++) {
 
-        thislen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &(p[element].timestamp), 1);
+        thislen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &(p[element].utime), 1);
         if (thislen < 0) return thislen; else pos += thislen;
 
         thislen = __float_encode_array(buf, offset + pos, maxlen - pos, &(p[element].v_x), 1);
@@ -83,7 +83,7 @@ int __omnibot_speed_command_t_encoded_array_size(const omnibot_speed_command_t *
     int size = 0, element;
     for (element = 0; element < elements; element++) {
 
-        size += __int64_t_encoded_array_size(&(p[element].timestamp), 1);
+        size += __int64_t_encoded_array_size(&(p[element].utime), 1);
 
         size += __float_encoded_array_size(&(p[element].v_x), 1);
 
@@ -118,11 +118,11 @@ int omnibot_speed_command_t_get_field(const omnibot_speed_command_t *p, int i, l
     switch (i) {
     
         case 0: {
-            f->name = "timestamp";
+            f->name = "utime";
             f->type = LCM_FIELD_INT64_T;
             f->typestr = "int64_t";
             f->num_dim = 0;
-            f->data = (void *) &p->timestamp;
+            f->data = (void *) &p->utime;
             return 0;
         }
         
@@ -181,7 +181,7 @@ int __omnibot_speed_command_t_decode_array(const void *buf, int offset, int maxl
 
     for (element = 0; element < elements; element++) {
 
-        thislen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &(p[element].timestamp), 1);
+        thislen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &(p[element].utime), 1);
         if (thislen < 0) return thislen; else pos += thislen;
 
         thislen = __float_decode_array(buf, offset + pos, maxlen - pos, &(p[element].v_x), 1);
@@ -202,7 +202,7 @@ int __omnibot_speed_command_t_decode_array_cleanup(omnibot_speed_command_t *p, i
     int element;
     for (element = 0; element < elements; element++) {
 
-        __int64_t_decode_array_cleanup(&(p[element].timestamp), 1);
+        __int64_t_decode_array_cleanup(&(p[element].utime), 1);
 
         __float_decode_array_cleanup(&(p[element].v_x), 1);
 
@@ -240,7 +240,7 @@ int __omnibot_speed_command_t_clone_array(const omnibot_speed_command_t *p, omni
     int element;
     for (element = 0; element < elements; element++) {
 
-        __int64_t_clone_array(&(p[element].timestamp), &(q[element].timestamp), 1);
+        __int64_t_clone_array(&(p[element].utime), &(q[element].utime), 1);
 
         __float_clone_array(&(p[element].v_x), &(q[element].v_x), 1);
 

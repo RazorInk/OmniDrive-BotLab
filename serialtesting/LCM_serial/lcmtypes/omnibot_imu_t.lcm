@@ -1,0 +1,8 @@
+struct omnibot_imu_t
+{
+    int64_t utime;
+
+    float gyro[3];
+    float accel[3];
+    float mag[3];
+}
