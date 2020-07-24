@@ -64,7 +64,7 @@ class Odometry
 			float vb = enc2meters*msg->b_delta;
 			float vc = enc2meters*msg->c_delta;
 
-			Kinematics::CartesianVels cart_vel = kin_.inverseKinematics(va, vb, vc);
+			Kinematics::CartesianVels cart_vel = kin_.inverseKinematicsLocal(va, vb, vc);
 
 			dx = cart_vel.vx;
 			dy = cart_vel.vy;
@@ -73,8 +73,9 @@ class Odometry
 			float angle1 = clamp_radians(psi_ + dpsi/2.0f);
 			float angle2 = clamp_radians(psi_ + dpsi/2.0f + PI/2);
 
-			x_ += dx * cos(angle1) + dy * cos(angle2);
-			y_ += dx * sin(angle2) + dy * sin(angle1);
+			// TODO: verify transform
+			x_ += dx * cos(angle1) - dy * sin(angle1);
+			y_ += dx * sin(angle1) + dy * cos(angle1);
 			psi_ =  clamp_radians(psi_ + dpsi);
 
 			// Publish odometry msg

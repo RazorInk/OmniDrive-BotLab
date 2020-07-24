@@ -1,16 +1,16 @@
 make: Nothing to be done for 'all'.
 In file included from serialLinkTx.cpp:2:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematics(float, float, float)’:
+kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
 kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
   }
   ^
 In file included from odometry.cpp:14:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematics(float, float, float)’:
+kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
 kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
   }
   ^
 In file included from motion_controller.cpp:12:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematics(float, float, float)’:
+kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
 kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
   }
   ^

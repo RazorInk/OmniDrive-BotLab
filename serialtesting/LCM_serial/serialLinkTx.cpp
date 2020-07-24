@@ -1,13 +1,15 @@
 #include "serialLinkCommon.hpp"
 #include "kinematics.hpp"
+#define PI 3.14159265358979323846
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 
 //LCM handler functions
-class speedCommandHandler{
+class SpeedCommandHandler{
 	private:
 	Kinematics kin_;
+	float psi_;
 	public:
-	speedCommandHandler(Kinematics kin) : kin_(kin) {}
+	SpeedCommandHandler(Kinematics kin) : kin_(kin) {}
 	void speed_command_handler(
 		const lcm::ReceiveBuffer *rbuf,
 		const std::string & chan,
@@ -19,10 +21,16 @@ class speedCommandHandler{
 		// float vel_a = -20*lcmMsg->v_y - 2.68*lcmMsg->w_z;
 		// float vel_b = 17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
 		// float vel_c = -17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
+		float vx_gbl = lcmMsg->v_x;
+		float vy_gbl = lcmMsg->v_y;
+		float wz_gbl = lcmMsg->w_z;
 
+		// TODO: verify this is the right transform
+		float vx_lcl =   vx_gbl * cos(psi_) + vy_gbl * sin(psi_);
+		float vy_lcl = - vx_gbl * sin(psi_) + vy_gbl * sin(psi_);
 
 		Kinematics::KiwiVels kiwi_vel = 
-			kin_.forwardKinematics(lcmMsg->v_x, lcmMsg->v_y, lcmMsg->w_z);
+			kin_.forwardKinematicsLocal(vx_lcl, vy_lcl, wz_gbl);
 		float vel_a = kiwi_vel.va;
 		float vel_b = kiwi_vel.vb;
 		float vel_c = kiwi_vel.vc;
@@ -46,6 +54,14 @@ class speedCommandHandler{
 
 		OmnibotMessaging.txMessage(&uartMsg);
 	}
+
+	void odometry_handler(
+		const lcm::ReceiveBuffer *rbuf,
+		const std::string & chan,
+		const odometry_t *lcmMsg) {
+		
+		psi_ = lcmMsg->psi;
+	}
 };
 
 int main (int argc, char *argv[]) {
@@ -58,13 +74,17 @@ int main (int argc, char *argv[]) {
 
 	lcm::LCM lcm;
 	Kinematics kin(0.05, 0.134);
-	speedCommandHandler handler(kin);
+	SpeedCommandHandler handler(kin);
 	if(!lcm.good()) return 1;
 
 	std::cerr << "we are running!!!\n" << std::endl;
 	
 	lcm.subscribe("OMNIBOT_SPEED_COMMAND",
-	              &speedCommandHandler::speed_command_handler,
+	              &SpeedCommandHandler::speed_command_handler,
+	              &handler);
+
+	lcm.subscribe("ODOMETRY",
+	              &SpeedCommandHandler::odometry_handler,
 	              &handler);
 
 	while(0 == lcm.handle()){
