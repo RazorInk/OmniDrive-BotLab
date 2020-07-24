@@ -27,7 +27,7 @@ class SpeedCommandHandler{
 
 		// TODO: verify this is the right transform
 		float vx_lcl =   vx_gbl * cos(psi_) + vy_gbl * sin(psi_);
-		float vy_lcl = - vx_gbl * sin(psi_) + vy_gbl * sin(psi_);
+		float vy_lcl = - vx_gbl * sin(psi_) + vy_gbl * cos(psi_);
 
 		Kinematics::KiwiVels kiwi_vel = 
 			kin_.forwardKinematicsLocal(vx_lcl, vy_lcl, wz_gbl);
@@ -65,7 +65,7 @@ class SpeedCommandHandler{
 };
 
 int main (int argc, char *argv[]) {
-	int fd = serialOpen("/dev/serial0", 512000);
+	int fd = serialOpen("/dev/serial0", UARTBAUD);
 	if (fd < 0) {
 		std::cout << "Error while opening device... " << "errno = " << errno << std::endl;
 		perror("Something went wrong with open()");

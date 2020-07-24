@@ -2,7 +2,7 @@ import serial
 import time
 import os
 
-ser = serial.Serial("/dev/serial0",baudrate=512000,timeout=0.005) 
+ser = serial.Serial("/dev/serial0",baudrate=115200,timeout=0.005) 
 if ser.isOpen():
 	print(ser.name + ' is open...')
 writeData1 = [0xFA,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x0F]

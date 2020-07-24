@@ -5,7 +5,7 @@ Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 int main (int argc, char *argv[]) {
 	lcm::LCM lcmInstance;
 	uint8_t sdata_out[64];
-	int fd = serialOpen("/dev/serial0", 512000);
+	int fd = serialOpen("/dev/serial0", UARTBAUD);
 	if (fd < 0) {
 		std::cout << "Error while opening device... " << "errno = " << errno << std::endl;
 		perror("Something went wrong with open()");

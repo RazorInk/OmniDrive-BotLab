@@ -21,11 +21,12 @@
 #include "lcmtypes/omnibot_speed_command_t.hpp"
 #include "lcmtypes/odometry_t.hpp"
 
+#define UARTBAUD 115200
 
 extern int errno;
 
 void sendMessageUART(Messaging::Message* msg_buf) {
-	int fd = serialOpen("/dev/serial0", 512000);
+	int fd = serialOpen("/dev/serial0", UARTBAUD);
 	write (fd, (uint8_t*)msg_buf, 64);
 	return;
 }
