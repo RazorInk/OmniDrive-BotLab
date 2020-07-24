@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cmath>
 #include <signal.h>
+#include "kinematics.hpp"
 #define PI 3.14159265358979323846
 
 float clamp_speed(float speed)
@@ -39,7 +40,7 @@ public:
 	/**
 	* Constructor for MotionController.
 	*/
-	MotionController(lcm::LCM * instance) : lcmInstance(instance)
+	MotionController(lcm::LCM * instance, Kinematics * kin) : lcmInstance(instance)
 	{
 	}
 
@@ -74,12 +75,11 @@ public:
 
 		if(!targets_.empty()) {
 			std::cout << "NOT EMPTY\n";
-			// Use feedback based on heading error for line-of-sight vector pointing to the target.
+			// Use feedback based on heading error for line-of-sight vector pointing 
+			// to the target.
 			pose_xyt_t target = targets_.back();
-	    std::cout << "back\n";
 			// Convert odometry to the global coordinates
 			pose_xyt_t pose = currentPose();
-	    std::cout << "current\n";
 			double targetHeading = target.psi;
 			double error = angle_diff(targetHeading, pose.psi);
 			std::cout << "targetHeading: " << targetHeading << ", pose Theta: " << pose.psi << std::endl;
@@ -89,7 +89,9 @@ public:
 			std::cout << "start calculatiing\n";
 	    //if the error is small, vary the turnspeed linearly with the error
 			if(std::abs(error) < 0.7) turnspeed = 4 * std::abs(error);
-			turnspeed = std::min(turnspeed, kTurnSpeed);//don't turn faster than the desired turnspeed
+
+			//don't turn faster than the desired turnspeed
+			turnspeed = std::min(turnspeed, kTurnSpeed);
 
 			// Turn left if the target is to the left
 			if(error > 0.0)
@@ -133,12 +135,13 @@ public:
 		const robot_path_t* path) {
 
 		targets_ = path->path;
-		std::reverse(targets_.begin(), targets_.end()); // store first at back to allow for easy pop_back()
+		// store first at back to allow for easy pop_back()
+		std::reverse(targets_.begin(), targets_.end()); 
 
 		std::cout << "received new path at time: " << path->utime << "\n";
-		for(auto pose : targets_){
+		for(auto pose : targets_) {
 				std::cout << "(" << pose.x << "," << pose.y << "," << pose.psi << "); ";
-		}std::cout << "\n";
+		} std::cout << "\n";
 		assignNextTarget();
 
 		//confirm.utime = now();
@@ -165,6 +168,8 @@ private:
 
 	lcm::LCM * lcmInstance;
 
+	Kinematics * kin;
+
 	//int64_t now(){
 	//    return utime_now() + time_offset;
 	//}
@@ -181,12 +186,6 @@ private:
 		{
 				return false;
 		}
-		// If there's no odometry, then we're nowhere, so we couldn't be at a target
-		//if(odomTrace_.empty())
-		//{
-		//    return false;
-		//}
-
 		pose_xyt_t target = targets_.back();
 		pose_xyt_t pose = currentPose();
 
@@ -198,11 +197,9 @@ private:
 
 	bool assignNextTarget(void) {
 		// If there was a target, remove it
-		if(!targets_.empty())
-		{
+		if(!targets_.empty()) {
 				targets_.pop_back();
 		}
-
 		return !targets_.empty();
 	}
 
@@ -222,7 +219,8 @@ private:
 
 int main(int argc, char** argv) {
 	lcm::LCM lcmInstance;
-	MotionController controller(&lcmInstance);
+	Kinematics kin(0.05, 0.134);
+	MotionController controller(&lcmInstance, &kin);
 	lcmInstance.subscribe("ODOMETRY", &MotionController::handleOdometry, &controller);
 	lcmInstance.subscribe("CONTROLLER_PATH", &MotionController::handlePath, &controller);
 

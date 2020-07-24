@@ -24,3 +24,5 @@ g++ `pkg-config --libs lcm` -o  bin/odometry odometry.cpp
 g++ `pkg-config --libs lcm` -o  bin/motion_controller motion_controller.cpp
 g++ `pkg-config --libs lcm` -o  bin/drive_square drive_square.cpp
 
+g++ `pkg-config --libs lcm` -o  bin/simple_square simple_square.cpp
+
