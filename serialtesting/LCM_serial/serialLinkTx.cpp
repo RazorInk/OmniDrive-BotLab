@@ -1,9 +1,13 @@
 #include "serialLinkCommon.hpp"
+#include "kinematics.hpp"
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 
 //LCM handler functions
 class speedCommandHandler{
+	private:
+	Kinematics kin_;
 	public:
+	speedCommandHandler(Kinematics kin) : kin_(kin) {}
 	void speed_command_handler(
 		const lcm::ReceiveBuffer *rbuf,
 		const std::string & chan,
@@ -12,9 +16,16 @@ class speedCommandHandler{
 		std::cerr<<"Preparing to send speed command message to Nucleo\n";
 		std::cerr<< lcmMsg->v_x <<", "<< lcmMsg->v_y <<", "<< lcmMsg->w_z << "\n";
 
-		float vel_a = -20*lcmMsg->v_y - 2.68*lcmMsg->w_z;
-		float vel_b = 17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
-		float vel_c = -17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
+		// float vel_a = -20*lcmMsg->v_y - 2.68*lcmMsg->w_z;
+		// float vel_b = 17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
+		// float vel_c = -17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
+
+
+		Kinematics::KiwiVels kiwi_vel = 
+			kin_.forwardKinematics(lcmMsg->v_x, lcmMsg->v_y, lcmMsg->w_z);
+		float vel_a = kiwi_vel.va;
+		float vel_b = kiwi_vel.vb;
+		float vel_c = kiwi_vel.vc;
 
 		std::cout << vel_a << ' ' << vel_b << ' ' << vel_c << '\n';
 
@@ -46,7 +57,8 @@ int main (int argc, char *argv[]) {
 	}
 
 	lcm::LCM lcm;
-	speedCommandHandler handler;
+	Kinematics kin(0.05, 0.134);
+	speedCommandHandler handler(kin);
 	if(!lcm.good()) return 1;
 
 	std::cerr << "we are running!!!\n" << std::endl;
