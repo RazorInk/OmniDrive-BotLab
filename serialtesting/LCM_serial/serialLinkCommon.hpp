@@ -54,24 +54,25 @@ void rxMsgCallback(Messaging::Message &msg) {
 			nucleoGeneralUpdate nucleoGeneralUpdate_data = 
 				*((nucleoGeneralUpdate*)(msg.msgData));
 			omnibot_encoder_t encoder;
-			omnibot_imu_t imu;
+			// omnibot_imu_t imu;
+			// std::cout << "here2" << std::endl;
 
 			encoder.a_delta = nucleoGeneralUpdate_data.a_delta;
 			encoder.b_delta = nucleoGeneralUpdate_data.b_delta;
 			encoder.c_delta = nucleoGeneralUpdate_data.c_delta;
 
-			std::copy(
-				std::begin(nucleoGeneralUpdate_data.gyro),
-				std::end(nucleoGeneralUpdate_data.gyro), std::begin(imu.gyro));
-			std::copy(
-				std::begin(nucleoGeneralUpdate_data.accel),
-				std::end(nucleoGeneralUpdate_data.accel), std::begin(imu.accel));
-			std::copy(
-				std::begin(nucleoGeneralUpdate_data.mag),
-				std::end(nucleoGeneralUpdate_data.mag), std::begin(imu.mag));
+			// std::copy(
+			// 	std::begin(nucleoGeneralUpdate_data.gyro),
+			// 	std::end(nucleoGeneralUpdate_data.gyro), std::begin(imu.gyro));
+			// std::copy(
+			// 	std::begin(nucleoGeneralUpdate_data.accel),
+			// 	std::end(nucleoGeneralUpdate_data.accel), std::begin(imu.accel));
+			// std::copy(
+			// 	std::begin(nucleoGeneralUpdate_data.mag),
+			// 	std::end(nucleoGeneralUpdate_data.mag), std::begin(imu.mag));
 
-			lcmInstance.publish("OMNIBOT_ENCODER", &encoder);
-			lcmInstance.publish("OMNIBOT_IMU", &imu);
+			lcmInstance.publish("OMNIBOT_ENCODERS", &encoder);
+			// lcmInstance.publish("OMNIBOT_IMU", &imu);
 		}break;
 		default:                               {
 		}break;

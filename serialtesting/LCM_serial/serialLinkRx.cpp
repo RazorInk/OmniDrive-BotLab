@@ -16,12 +16,16 @@ int main (int argc, char *argv[]) {
 
 	printf("we are running!!!\n");
 	
-	while(0 == lcmInstance.handle()){
+	while(1){
 		if (serialDataAvail(fd) == -1) {std::cerr << errno << std::endl;;}
 
 		while (serialDataAvail(fd) < 64) {}
+		// std::cout << "here" << std::endl;
 		read (fd, sdata_out, 64);
+		// for (int i = 0; i < 64; ++i) std::cout << (int)sdata_out[i] << ' ';
+		// std::cout << std::endl;
 		OmnibotMessaging.rxMessageSequence(sdata_out);
+		lcmInstance.handleTimeout(5);
 	}
 
   return 0 ;

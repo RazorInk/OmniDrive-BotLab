@@ -18,13 +18,13 @@ int main(int argc, char** argv) {
 		// 13 ms
 		lcmInstance.handleTimeout(40);
 		if ((ch = getch()) == ERR) {
-			if (!flag1) {
-				cmd.v_x = 0;
-				cmd.v_y = 0;
-				cmd.w_z = 0;
-				lcmInstance.publish("OMNIBOT_SPEED_COMMAND", &cmd);
-			}
-			flag1 = true;
+			// if (!flag1) {
+			// 	cmd.v_x = 0;
+			// 	cmd.v_y = 0;
+			// 	cmd.w_z = 0;
+			// 	lcmInstance.publish("OMNIBOT_SPEED_COMMAND", &cmd);
+			// }
+			// flag1 = true;
 		}
 		else {
 			flag1 = false;
@@ -52,12 +52,17 @@ int main(int argc, char** argv) {
 				case 'q' :
 				cmd.v_x = 0;
 				cmd.v_y = 0;
-				cmd.w_z = 1;
+				cmd.w_z = 1.5;
 				break;
 				case 'e' :
 				cmd.v_x = 0;
 				cmd.v_y = 0;
-				cmd.w_z = -1;
+				cmd.w_z = -1.5;
+				break;
+				case ' ' :
+				cmd.v_x = 0;
+				cmd.v_y = 0;
+				cmd.w_z = 0;
 				break;
 			}
 			lcmInstance.publish("OMNIBOT_SPEED_COMMAND", &cmd);

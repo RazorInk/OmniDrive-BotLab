@@ -51,25 +51,33 @@ class Odometry
     void handleEncoders(const lcm::ReceiveBuffer* buf,
 			const std::string& channel, const omnibot_encoder_t* msg){
 			// Skip the first encoder reading
-			if (last_time_ == 0) {
-					last_time_ = msg->utime;
-					return;
-			}
+			// if (last_time_ == 0) {
+			// 		last_time_ = msg->utime;
+			// 		return;
+			// }
+
+			// std::cout << "just got to handleEncoders" << std::endl;
 
 			float dx, dy, dpsi;
 
 			float enc2meters = (WHEEL_DIAMETER * PI) / (GEAR_RATIO * ENCODER_RES);
+			std::cout << "odom: a_delta, b_delta, c_delta = " 
+				<< msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
 
-			float va = enc2meters*msg->a_delta;
-			float vb = enc2meters*msg->b_delta;
-			float vc = enc2meters*msg->c_delta;
+			float va = enc2meters*((float)msg->a_delta);
+			float vb = enc2meters*((float)msg->b_delta);
+			float vc = enc2meters*((float)msg->c_delta);
+			std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
 
 			Kinematics::CartesianVels cart_vel = kin_.inverseKinematicsLocal(va, vb, vc);
+			// std::cout << "did kinematics calcs" << std::endl;
 
 			dx = cart_vel.vx;
 			dy = cart_vel.vy;
 			dpsi = cart_vel.wz;
+			// std::cout << "dx, dy = " << dx << ", " << dy << std::endl;
 
+			// std::cout << "psi_ = " << psi_ << ", dspi = " << dpsi << std::endl;
 			float angle1 = clamp_radians(psi_ + dpsi/2.0f);
 			float angle2 = clamp_radians(psi_ + dpsi/2.0f + PI/2);
 
@@ -79,6 +87,7 @@ class Odometry
 			psi_ =  clamp_radians(psi_ + dpsi);
 
 			// Publish odometry msg
+			// std::cout << "about to construct lcm msg" << std::endl;
 			odometry_t odom_msg;
 			odom_msg.utime = msg->utime;
 			odom_msg.v_x = dx / DT;
@@ -88,6 +97,7 @@ class Odometry
 			odom_msg.x = x_;
 			odom_msg.y = y_;
 			odom_msg.psi = psi_;
+			std::cout << x_ << ", " << y_ << ", " << psi_ << std::endl;
 			lcm_instance_->publish("ODOMETRY", &odom_msg);
     }
 
@@ -99,10 +109,12 @@ class Odometry
     float clamp_radians(float angle){
 
 			if(angle < -PI) {
-					for(; angle < -PI; angle += 2.0*PI);
+				std::cout << "angle < -PI" << std::endl;
+				for(; angle < -PI; angle += 2.0*PI);
 			}
 			else if(angle > PI) {
-					for(; angle > PI; angle -= 2.0*PI);
+				std::cout << "angle > PI" << std::endl;
+				for(; angle > PI; angle -= 2.0*PI);
 			}
 
 			return angle;
@@ -126,10 +138,9 @@ int main(int argc, char** argv)
 
 	signal(SIGINT, exit);
 
-	while(true)
+	while(lcmInstance.handle() == 0)
 	{
-			lcmInstance.handleTimeout(50);  // update at 20Hz minimum
-
+		// update at 20Hz minimum
 	}
 
 	return 0;

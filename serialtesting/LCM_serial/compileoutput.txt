@@ -1,19 +1,4 @@
 make: Nothing to be done for 'all'.
-In file included from serialLinkTx.cpp:2:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
-kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
-  }
-  ^
-In file included from odometry.cpp:14:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
-kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
-  }
-  ^
-In file included from motion_controller.cpp:12:
-kinematics.hpp: In member function ‘Kinematics::CartesianVels Kinematics::inverseKinematicsLocal(float, float, float)’:
-kinematics.hpp:33:2: warning: no return statement in function returning non-void [-Wreturn-type]
-  }
-  ^
 motion_controller.cpp: In member function ‘void MotionController::handlePath(const lcm::ReceiveBuffer*, const string&, const robot_path_t*)’:
 motion_controller.cpp:139:15: note: parameter passing for argument of type ‘__gnu_cxx::__normal_iterator<pose_xyt_t*, std::vector<pose_xyt_t> >’ changed in GCC 7.1
    std::reverse(targets_.begin(), targets_.end());
