@@ -55,6 +55,50 @@ class SpeedCommandHandler{
 		OmnibotMessaging.txMessage(&uartMsg);
 	}
 
+	void kiwi_command_handler(
+		const lcm::ReceiveBuffer *rbuf,
+		const std::string & chan,
+		const omnibot_kiwi_command_t *lcmMsg) {
+		// std::cout << "kiwi_command_handler!" << std::endl;
+		velocityCmd velocityCmd_msg = {
+			lcmMsg->v_a,
+			lcmMsg->v_b,
+			lcmMsg->v_c, 0x00};
+		Messaging::Message uartMsg;
+		std::cout << (uint16_t)(lcmMsg->v_a) << ' '
+			<< (uint16_t)(lcmMsg->v_b) << ' ' 
+			<< (uint16_t)(lcmMsg->v_c) << '\n';
+
+		OmnibotMessaging.generateMessage(
+			&uartMsg,
+			(void*)&velocityCmd_msg,
+			Messaging::VELOCITY_CMD);
+
+		OmnibotMessaging.txMessage(&uartMsg);
+	}
+
+	void global_pid_handler(
+		const lcm::ReceiveBuffer *rbuf,
+		const std::string & chan,
+		const omnibot_global_pid_t *lcmMsg) {
+		// std::cout << "kiwi_command_handler!" << std::endl;
+		globalPID globalPID_msg = {
+			lcmMsg->p,
+			lcmMsg->i,
+			lcmMsg->d};
+		Messaging::Message uartMsg;
+		std::cout << (lcmMsg->p) << ' '
+			<< (lcmMsg->i) << ' ' 
+			<< (lcmMsg->d) << '\n';
+
+		OmnibotMessaging.generateMessage(
+			&uartMsg,
+			(void*)&globalPID_msg,
+			Messaging::GLOBAL_PID);
+
+		OmnibotMessaging.txMessage(&uartMsg);
+	}
+
 	void odometry_handler(
 		const lcm::ReceiveBuffer *rbuf,
 		const std::string & chan,
@@ -81,6 +125,14 @@ int main (int argc, char *argv[]) {
 	
 	lcm.subscribe("OMNIBOT_SPEED_COMMAND",
 	              &SpeedCommandHandler::speed_command_handler,
+	              &handler);
+
+	lcm.subscribe("OMNIBOT_KIWI_COMMAND",
+	              &SpeedCommandHandler::kiwi_command_handler,
+	              &handler);
+
+	lcm.subscribe("OMNIBOT_GLOBAL_PID",
+	              &SpeedCommandHandler::global_pid_handler,
 	              &handler);
 
 	lcm.subscribe("ODOMETRY",

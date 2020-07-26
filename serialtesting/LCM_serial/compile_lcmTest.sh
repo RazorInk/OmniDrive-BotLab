@@ -26,3 +26,6 @@ g++ `pkg-config --libs lcm` -o  bin/drive_square drive_square.cpp
 
 g++ `pkg-config --libs lcm` -o  bin/simple_square simple_square.cpp
 
+g++ `pkg-config --libs lcm` -o  keyboard keyboard.cpp -lncurses
+g++ `pkg-config --libs lcm` -o  pid_commander pid_commander.cpp
+

@@ -19,6 +19,8 @@
 #include "lcmtypes/omnibot_encoder_t.hpp"
 #include "lcmtypes/omnibot_imu_t.hpp"
 #include "lcmtypes/omnibot_speed_command_t.hpp"
+#include "lcmtypes/omnibot_kiwi_command_t.hpp"
+#include "lcmtypes/omnibot_global_pid_t.hpp"
 #include "lcmtypes/odometry_t.hpp"
 
 #define UARTBAUD 115200

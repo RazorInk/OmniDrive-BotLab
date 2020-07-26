@@ -61,13 +61,12 @@ class Odometry
 			float dx, dy, dpsi;
 
 			float enc2meters = (WHEEL_DIAMETER * PI) / (GEAR_RATIO * ENCODER_RES);
-			std::cout << "odom: a_delta, b_delta, c_delta = " 
-				<< msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
+			std::cout << msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
 
 			float va = enc2meters*((float)msg->a_delta);
 			float vb = enc2meters*((float)msg->b_delta);
 			float vc = enc2meters*((float)msg->c_delta);
-			std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
+			// std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
 
 			Kinematics::CartesianVels cart_vel = kin_.inverseKinematicsLocal(va, vb, vc);
 			// std::cout << "did kinematics calcs" << std::endl;
@@ -97,7 +96,7 @@ class Odometry
 			odom_msg.x = x_;
 			odom_msg.y = y_;
 			odom_msg.psi = psi_;
-			std::cout << x_ << ", " << y_ << ", " << psi_ << std::endl;
+			std::cerr << x_ << ", " << y_ << ", " << psi_ << std::endl;
 			lcm_instance_->publish("ODOMETRY", &odom_msg);
     }
 
