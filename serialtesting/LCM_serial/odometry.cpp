@@ -61,12 +61,12 @@ class Odometry
 			float dx, dy, dpsi;
 
 			float enc2meters = (WHEEL_DIAMETER * PI) / (GEAR_RATIO * ENCODER_RES);
-			std::cout << msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
+			std::cout << "odom: da, db, dc = " << msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
 
 			float va = enc2meters*((float)msg->a_delta);
 			float vb = enc2meters*((float)msg->b_delta);
 			float vc = enc2meters*((float)msg->c_delta);
-			// std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
+			std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
 
 			Kinematics::CartesianVels cart_vel = kin_.inverseKinematicsLocal(va, vb, vc);
 			// std::cout << "did kinematics calcs" << std::endl;

@@ -1,6 +1,7 @@
 #include "serialLinkCommon.hpp"
 #include "kinematics.hpp"
 #define PI 3.14159265358979323846
+#define TANSPEED_TO_MOTORSPEED 38.96113f // number of (encoder counts per tstep) per (m/s)
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 
 //LCM handler functions
@@ -31,21 +32,21 @@ class SpeedCommandHandler{
 
 		Kinematics::KiwiVels kiwi_vel = 
 			kin_.forwardKinematicsLocal(vx_lcl, vy_lcl, wz_gbl);
-		float vel_a = kiwi_vel.va;
-		float vel_b = kiwi_vel.vb;
-		float vel_c = kiwi_vel.vc;
+		float vel_a = kiwi_vel.va*TANSPEED_TO_MOTORSPEED;
+		float vel_b = kiwi_vel.vb*TANSPEED_TO_MOTORSPEED;
+		float vel_c = kiwi_vel.vc*TANSPEED_TO_MOTORSPEED;
 
 		std::cout << vel_a << ' ' << vel_b << ' ' << vel_c << '\n';
 
 		velocityCmd velocityCmd_msg = {
-			(int8_t)(vel_a/52.36*127),
-			(int8_t)(vel_b/52.36*127),
-			(int8_t)(vel_c/52.36*127), 0x00};
+			(int8_t)(vel_a),
+			(int8_t)(vel_b),
+			(int8_t)(vel_c), 0x00};
 		
 		printf("%d, %d, %d\n",
-			(int8_t)(vel_a/52.36*100),
-			(int8_t)(vel_b/52.36*100),
-			(int8_t)(vel_c/52.36*100));
+			(int8_t)(vel_a),
+			(int8_t)(vel_b),
+			(int8_t)(vel_c));
 		Messaging::Message uartMsg;
 		OmnibotMessaging.generateMessage(
 			&uartMsg,
