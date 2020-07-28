@@ -1,0 +1,8 @@
+struct omnibot_kiwi_command_t
+
+{
+    int64_t  utime;
+    int8_t v_a;
+    int8_t v_b;
+    int8_t v_c;
+}

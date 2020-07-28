@@ -1,0 +1,7 @@
+struct omnibot_global_pid_t
+
+{
+    float p;
+		float i;
+		float d;
+}
