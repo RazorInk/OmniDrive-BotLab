@@ -1,6 +1,6 @@
 # Only add your directories to this folder if you are 100% sure that
 # it will always compile without warnings.
-SUBDIRS = lcmtypes common imagesource vx/math vx vx/gtk slam planning apps mbot optitrack
+SUBDIRS = lcmtypes common messaging imagesource vx/math vx vx/gtk slam planning apps mbot optitrack
 MBOT_SUBDIRS = lcmtypes common vx/math slam planning mbot 
 LAPTOP_SUBDIRS = lcmtypes common imagesource vx/math vx vx/gtk slam planning apps
 

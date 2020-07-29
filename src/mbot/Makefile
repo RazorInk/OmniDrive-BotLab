@@ -13,7 +13,13 @@ BIN_TIMESYNC = $(BIN_PATH)/timesync
 BIN_WIFI_READER = $(BIN_PATH)/wifi_reader
 BIN_OLED_EXAMPLE = $(BIN_PATH)/oled_example
 
-ALL = $(BIN_RPLIDAR_DRIVER) $(BIN_WIFI_READER) $(BIN_TIMESYNC) $(BIN_DRIVE_SQUARE) $(BIN_MOTION_CONTROLLER) $(BIN_ODOMETRY) $(BIN_MC_SMOOTH) $(BIN_OLED_EXAMPLE)
+BIN_SERIALLINKTX = $(BIN_PATH)/serialLinkTx
+BIN_SERIALLINKRX = $(BIN_PATH)/serialLinkRx
+
+ALL = $(BIN_RPLIDAR_DRIVER) $(BIN_WIFI_READER) \
+	$(BIN_TIMESYNC) $(BIN_DRIVE_SQUARE) $(BIN_MOTION_CONTROLLER) \
+	$(BIN_ODOMETRY) $(BIN_MC_SMOOTH) $(BIN_OLED_EXAMPLE) \
+	$(BIN_SERIALLINKTX) $(BIN_SERIALLINKRX)
 
 all: $(ALL)
 
@@ -44,6 +50,18 @@ $(BIN_WIFI_READER): wifi_reader.o $(LIBDEPS)
 $(BIN_OLED_EXAMPLE): oled_example.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
+
+$(BIN_SERIALLINKTX): serialLinkTx.o serialLinkCommon.o $(LIBDEPS)
+	@echo "    $@"
+	@$(CXX) -o $@ $^ $(LDFLAGS) $(CXXFLAGS)
+
+$(BIN_SERIALLINKRX): serialLinkRx.o serialLinkCommon.o $(LIBDEPS)
+	@echo "    $@"
+	@$(CXX) -o $@ $^ $(LDFLAGS) $(CXXFLAGS)
+
+serialLinkCommon.o : serialLinkCommon.hpp serialLinkCommon.cpp $(LIBDEPS)
+	@echo "    $@"
+	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $<
 
 clean:
 	@rm -f *.o *~ *.a

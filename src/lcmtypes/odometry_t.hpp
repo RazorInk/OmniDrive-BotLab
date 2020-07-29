@@ -20,15 +20,13 @@ class odometry_t
 
         float      y;
 
-        float      theta;
+        float      psi;
 
-        float      fwd_velocity;
+        float      v_x;
 
-        float      ang_velocity;
+        float      v_y;
 
-        float      left_velocity;
-
-        float      right_velocity;
+        float      w_z;
 
     public:
         /**
@@ -135,19 +133,16 @@ int odometry_t::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->y, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->theta, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->psi, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fwd_velocity, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->ang_velocity, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->left_velocity, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
-
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->right_velocity, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -166,19 +161,16 @@ int odometry_t::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->y, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->theta, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->psi, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fwd_velocity, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_x, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->ang_velocity, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->v_y, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->left_velocity, 1);
-    if(tlen < 0) return tlen; else pos += tlen;
-
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->right_velocity, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->w_z, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -194,13 +186,12 @@ int odometry_t::_getEncodedSizeNoHash() const
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
-    enc_size += __float_encoded_array_size(NULL, 1);
     return enc_size;
 }
 
 uint64_t odometry_t::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0x4dda128a5b3ad269LL;
+    uint64_t hash = 0x912e894a83e88abaLL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

@@ -24,8 +24,7 @@ int main(int argc, char** argv) {
 	bool flag1 = false;
 
 	while (1) {
-		// 13 ms
-		lcmInstance.handleTimeout(40);
+		lcmInstance.handleTimeout(10); // ms
 		if ((ch = getch()) == ERR) {
 			// if (!flag1) {
 			// 	cmd.v_x = 0;
@@ -67,6 +66,11 @@ int main(int argc, char** argv) {
 				cmd.v_x = 0;
 				cmd.v_y = 0;
 				cmd.w_z = -rot_speed;
+				break;
+				case 'f' :
+				cmd.v_x = lin_speed;
+				cmd.v_y = 0;
+				cmd.w_z = rot_speed;
 				break;
 				case ' ' :
 				cmd.v_x = 0;

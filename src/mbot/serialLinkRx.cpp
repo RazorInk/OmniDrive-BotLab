@@ -1,4 +1,4 @@
-#include "serialLinkCommon.hpp"
+#include <mbot/serialLinkCommon.hpp>
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 
 

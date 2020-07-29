@@ -1,5 +1,5 @@
-#include "serialLinkCommon.hpp"
-#include "kinematics.hpp"
+#include <mbot/serialLinkCommon.hpp>
+#include <mbot/kinematics.hpp>
 #define PI 3.14159265358979323846
 #define TANSPEED_TO_MOTORSPEED 38.96113f // number of (encoder counts per tstep) per (m/s)
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
@@ -9,23 +9,12 @@ class SpeedCommandHandler{
 	private:
 	Kinematics kin_;
 	float psi_;
-	public:
-	SpeedCommandHandler(Kinematics kin) : kin_(kin) {}
-	void speed_command_handler(
-		const lcm::ReceiveBuffer *rbuf,
-		const std::string & chan,
-		const omnibot_speed_command_t *lcmMsg) {
 
-		std::cerr<<"Preparing to send speed command message to Nucleo\n";
-		std::cerr<< lcmMsg->v_x <<", "<< lcmMsg->v_y <<", "<< lcmMsg->w_z << "\n";
+	float vx_gbl_;
+	float vy_gbl_;
+	float wz_gbl_;
 
-		// float vel_a = -20*lcmMsg->v_y - 2.68*lcmMsg->w_z;
-		// float vel_b = 17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
-		// float vel_c = -17.32*lcmMsg->v_x + 10*lcmMsg->v_y - 2.68*lcmMsg->w_z;
-		float vx_gbl = lcmMsg->v_x;
-		float vy_gbl = lcmMsg->v_y;
-		float wz_gbl = lcmMsg->w_z;
-
+	void send_speed_command(float vx_gbl, float vy_gbl, float wz_gbl) {
 		// TODO: verify this is the right transform
 		float vx_lcl =   vx_gbl * cos(psi_) + vy_gbl * sin(psi_);
 		float vy_lcl = - vx_gbl * sin(psi_) + vy_gbl * cos(psi_);
@@ -43,10 +32,10 @@ class SpeedCommandHandler{
 			(int8_t)(vel_b),
 			(int8_t)(vel_c), 0x00};
 		
-		printf("%d, %d, %d\n",
-			(int8_t)(vel_a),
-			(int8_t)(vel_b),
-			(int8_t)(vel_c));
+		// printf("%d, %d, %d\n",
+		// 	(int8_t)(vel_a),
+		// 	(int8_t)(vel_b),
+		// 	(int8_t)(vel_c));
 		Messaging::Message uartMsg;
 		OmnibotMessaging.generateMessage(
 			&uartMsg,
@@ -54,6 +43,23 @@ class SpeedCommandHandler{
 			Messaging::VELOCITY_CMD);
 
 		OmnibotMessaging.txMessage(&uartMsg);
+	}
+
+	public:
+	SpeedCommandHandler(Kinematics kin) : kin_(kin) {}
+	void speed_command_handler(
+		const lcm::ReceiveBuffer *rbuf,
+		const std::string & chan,
+		const omnibot_speed_command_t *lcmMsg) {
+
+		// std::cerr<<"Preparing to send speed command message to Nucleo\n";
+		// std::cerr<< lcmMsg->v_x <<", "<< lcmMsg->v_y <<", "<< lcmMsg->w_z << "\n";
+
+		vx_gbl_ = lcmMsg->v_x;
+		vy_gbl_ = lcmMsg->v_y;
+		wz_gbl_ = lcmMsg->w_z;
+		std::cout << "assigned velocities" << std::endl;
+		send_speed_command(vx_gbl_, vy_gbl_, wz_gbl_);
 	}
 
 	void kiwi_command_handler(
@@ -106,6 +112,7 @@ class SpeedCommandHandler{
 		const odometry_t *lcmMsg) {
 		
 		psi_ = lcmMsg->psi;
+		send_speed_command(vx_gbl_, vy_gbl_, wz_gbl_);
 	}
 };
 

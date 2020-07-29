@@ -4,11 +4,9 @@ struct odometry_t
 
     float x;
     float y;
-    float theta;
+    float psi;
 
-    float fwd_velocity;
-    float ang_velocity;
-    float left_velocity;
-    float right_velocity;
-
+    float v_x;
+    float v_y;
+    float w_z;
 }

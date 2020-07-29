@@ -9,9 +9,10 @@ LIB_COMMON = $(LIB_PATH)/libcommon.a
 LIBCOMMON_OBJS = \
 	c5.o \
 	config.o \
+	customSerial.o \
 	getopt.o \
 	ioutils.o \
-        param_widget.o \
+	param_widget.o \
 	pg.o \
 	pose_trace.o \
 	serial.o \
