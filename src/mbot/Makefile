@@ -15,11 +15,14 @@ BIN_OLED_EXAMPLE = $(BIN_PATH)/oled_example
 
 BIN_SERIALLINKTX = $(BIN_PATH)/serialLinkTx
 BIN_SERIALLINKRX = $(BIN_PATH)/serialLinkRx
+BIN_PID_TUNER = $(BIN_PATH)/pid_tuner
+BIN_KEYBOARD = $(BIN_PATH)/keyboard
 
 ALL = $(BIN_RPLIDAR_DRIVER) $(BIN_WIFI_READER) \
 	$(BIN_TIMESYNC) $(BIN_DRIVE_SQUARE) $(BIN_MOTION_CONTROLLER) \
 	$(BIN_ODOMETRY) $(BIN_MC_SMOOTH) $(BIN_OLED_EXAMPLE) \
-	$(BIN_SERIALLINKTX) $(BIN_SERIALLINKRX)
+	$(BIN_SERIALLINKTX) $(BIN_SERIALLINKRX) $(BIN_PID_TUNER) \
+	$(BIN_KEYBOARD)
 
 all: $(ALL)
 
@@ -55,13 +58,13 @@ $(BIN_SERIALLINKTX): serialLinkTx.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
-$(BIN_SERIALLINKRX): serialLinkRx.o $(LIBDEPS)
+$(BIN_PID_TUNER): pid_tuner.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
-# serialLinkCommon.o : serialLinkCommon.hpp serialLinkCommon.cpp $(LIBDEPS)
-# 	@echo "    $@"
-# 	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $< $(LDFLAGS_MESSAGING)
+$(BIN_KEYBOARD): keyboard.o $(LIBDEPS)
+	@echo "    $@"
+	@$(CXX) -o $@ $^ $(LDFLAGS) -lncurses
 
 clean:
 	@rm -f *.o *~ *.a

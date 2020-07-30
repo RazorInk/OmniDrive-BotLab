@@ -5,23 +5,28 @@
 *
 *******************************************************************************/
 
-#include <mbot/mbot_channels.h>
-#include <mbot/mbot_defs.h>
 #include <lcmtypes/odometry_t.hpp>
-#include <lcmtypes/mbot_encoder_t.hpp>
-#include <lcmtypes/reset_odometry_t.hpp>
-#include <common/lcm_config.h>
+#include <lcmtypes/omnibot_encoder_t.hpp>
 #include <lcm/lcm-cpp.hpp>
 #include <math.h>
 #include <signal.h>
 #include <iostream>
+#include <common/kinematics.hpp>
 
 #define PI 3.14159265358979323846
+#define WHEEL_DIAMETER 0.1
+#define WHEEL_RADIUS 0.05
+#define ROBOT_RADIUS 0.134
+#define GEAR_RATIO 20.4
+#define ENCODER_RES 48
+#define DT 0.0125
+
 class Odometry
 {
   private:
     lcm::LCM* lcm_instance_;
-    float x_, y_, theta_;
+		Kinematics kin_;
+    float x_, y_, psi_;
     int64_t last_time_;
 
   public:
@@ -31,7 +36,9 @@ class Odometry
     * TODO: initialize odometry
     *
     *******************************************************************************/
-    Odometry(lcm::LCM* lcm_instance) : lcm_instance_(lcm_instance), x_(0), y_(0), theta_(0), last_time_(0) {}
+    Odometry(lcm::LCM* lcm_instance, Kinematics kin) :
+			lcm_instance_(lcm_instance), kin_(kin),
+			x_(0), y_(0), psi_(0), last_time_(0) {}
 
 
     /*******************************************************************************
@@ -41,39 +48,56 @@ class Odometry
     *       publish new odometry to lcm ODOMETRY_CHANNEL
     *
     *******************************************************************************/
-    void handleEncoders(const lcm::ReceiveBuffer* buf, const std::string& channel, const mbot_encoder_t* msg){
-        // Skip the first encoder reading
-        if (last_time_ == 0)
-        {
-            last_time_ = msg->utime;
-            return;
-        }
+    void handleEncoders(const lcm::ReceiveBuffer* buf,
+			const std::string& channel, const omnibot_encoder_t* msg){
+			// Skip the first encoder reading
+			// if (last_time_ == 0) {
+			// 		last_time_ = msg->utime;
+			// 		return;
+			// }
 
-        // Publish odometry msg
-        odometry_t odom_msg;
-        odom_msg.utime = msg->utime;
-        lcm_instance_->publish(ODOMETRY_CHANNEL, &odom_msg);
+			// std::cout << "just got to handleEncoders" << std::endl;
 
-        // printf("x: %f\ny: %f\ntheta: %f", x_, y_, theta_);
-    }
+			float dx, dy, dpsi;
 
+			float enc2meters = (WHEEL_DIAMETER * PI) / (GEAR_RATIO * ENCODER_RES);
+			std::cout << "odom: da, db, dc = " << msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
 
-    /*******************************************************************************
-    * handleEncoders()
-    *
-    * TODO: calculate odometry from internal variables
-    *       publish new odometry to lcm ODOMETRY_CHANNEL
-    *
-    *******************************************************************************/
-    void handleOdometryReset(const lcm::ReceiveBuffer* buf, const std::string& channel, const reset_odometry_t* msg){
-        reset(msg->x, msg->y, msg->theta);
-    }
+			float va = enc2meters*((float)msg->a_delta);
+			float vb = enc2meters*((float)msg->b_delta);
+			float vc = enc2meters*((float)msg->c_delta);
+			std::cout << "odom: va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
 
+			Kinematics::CartesianVels cart_vel = kin_.inverseKinematicsLocal(va, vb, vc);
+			// std::cout << "did kinematics calcs" << std::endl;
 
-    void reset(float x = 0, float y = 0, float theta = 0) {
-        x_ = x;
-        y_ = y;
-        theta_ = clamp_radians(theta);
+			dx = cart_vel.vx;
+			dy = cart_vel.vy;
+			dpsi = cart_vel.wz;
+			// std::cout << "dx, dy = " << dx << ", " << dy << std::endl;
+
+			// std::cout << "psi_ = " << psi_ << ", dspi = " << dpsi << std::endl;
+			float angle1 = clamp_radians(psi_ + dpsi/2.0f);
+			float angle2 = clamp_radians(psi_ + dpsi/2.0f + PI/2);
+
+			// TODO: verify transform
+			x_ += dx * cos(angle1) - dy * sin(angle1);
+			y_ += dx * sin(angle1) + dy * cos(angle1);
+			psi_ =  clamp_radians(psi_ + dpsi);
+
+			// Publish odometry msg
+			// std::cout << "about to construct lcm msg" << std::endl;
+			odometry_t odom_msg;
+			odom_msg.utime = msg->utime;
+			odom_msg.v_x = dx / DT;
+			odom_msg.v_y = dy / DT;
+			odom_msg.w_z = dpsi / DT;
+			
+			odom_msg.x = x_;
+			odom_msg.y = y_;
+			odom_msg.psi = psi_;
+			std::cerr << x_ << ", " << y_ << ", " << psi_ << std::endl;
+			lcm_instance_->publish("ODOMETRY", &odom_msg);
     }
 
 
@@ -83,42 +107,40 @@ class Odometry
     *******************************************************************************/
     float clamp_radians(float angle){
 
-        if(angle < -PI)
-        {
-            for(; angle < -PI; angle += 2.0*PI);
-        }
-        else if(angle > PI)
-        {
-            for(; angle > PI; angle -= 2.0*PI);
-        }
+			if(angle < -PI) {
+				std::cout << "angle < -PI" << std::endl;
+				for(; angle < -PI; angle += 2.0*PI);
+			}
+			else if(angle > PI) {
+				std::cout << "angle > PI" << std::endl;
+				for(; angle > PI; angle -= 2.0*PI);
+			}
 
-        return angle;
+			return angle;
     }
 
     float angle_diff_radians(float angle1, float angle2){
-        float diff = angle2 - angle1;
-        while(diff < -PI) diff+=2.0*PI;
-        while(diff > PI) diff-=2.0*PI;
-        return diff;
+			float diff = angle2 - angle1;
+			while(diff < -PI) diff+=2.0*PI;
+			while(diff > PI) diff-=2.0*PI;
+			return diff;
     }
 };
 
 int main(int argc, char** argv)
 {
-    lcm::LCM lcmInstance(MULTICAST_URL);
+	lcm::LCM lcmInstance;
+	Kinematics kin(WHEEL_RADIUS, ROBOT_RADIUS);
 
-    Odometry odom(&lcmInstance);
-    lcmInstance.subscribe(MBOT_ENCODERS_CHANNEL, &Odometry::handleEncoders, &odom);
-    lcmInstance.subscribe(RESET_ODOMETRY_CHANNEL, &Odometry::handleOdometryReset, &odom);
+	Odometry odom(&lcmInstance, kin);
+	lcmInstance.subscribe("OMNIBOT_ENCODERS", &Odometry::handleEncoders, &odom);
 
-    signal(SIGINT, exit);
+	signal(SIGINT, exit);
 
-    while(true)
-    {
-        lcmInstance.handleTimeout(50);  // update at 20Hz minimum
+	while(lcmInstance.handle() == 0)
+	{
+		// update at 20Hz minimum
+	}
 
-
-    }
-
-    return 0;
+	return 0;
 }

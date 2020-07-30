@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "lcmtypes/omnibot_speed_command_t.hpp"
+#include <lcmtypes/omnibot_speed_command_t.hpp>
 #include <lcm/lcm-cpp.hpp>
 #include <iostream>
 #include <cassert>

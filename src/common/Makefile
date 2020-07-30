@@ -12,6 +12,7 @@ LIBCOMMON_OBJS = \
 	customSerial.o \
 	getopt.o \
 	ioutils.o \
+	kinematics.o \
 	param_widget.o \
 	pg.o \
 	pose_trace.o \

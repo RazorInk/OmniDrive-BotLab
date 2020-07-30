@@ -30,12 +30,7 @@ class Kinematics {
 	* @note   Can be used for distances instead of velocities, since all terms
 	*         have '/s' on their units, which can be dropped.
 	*/
-	KiwiVels forwardKinematicsLocal(float vx, float vy, float wz) {
-		float va = (-vy - botRad_meters_*wz);
-		float vb = (SIN120*vx - COS120*vy - botRad_meters_*wz);
-		float vc = (SIN240*vx - COS240*vy - botRad_meters_*wz);
-		return {va, vb, vc};
-	}
+	KiwiVels forwardKinematicsLocal(float vx, float vy, float wz);
 
 	/**
 	* @brief  Maps from "kiwi" space (i.e., three wheel tangential vel in m/s) to 
@@ -48,15 +43,7 @@ class Kinematics {
 	* @note   Can be used for distances instead of velocities, since all terms
 	*         have '/s' on their units, which can be dropped.
 	*/
-	CartesianVels inverseKinematicsLocal(float &va, float &vb, float &vc) {
-		// std::cout << "ROOTTHREE = " << ROOTTHREE << std::endl;
-		// std::cout << "wheelRad_meters_ = " << wheelRad_meters_ << std::endl;
-		// std::cout << "va, vb, vc = " << va << ", " << vb << ", " << vc << std::endl;
-		float vx = (1/ROOTTHREE)*(vb - vc);
-		float vy = ((-2/3)*va + (1/3)*(vb + vc));
-		float wz = (1/(3*botRad_meters_))*(-va - vb - vc);
-		return {vx, vy, wz};
-	}
+	CartesianVels inverseKinematicsLocal(float &va, float &vb, float &vc);
 
 	private:
 		lcm::LCM lcmInstance_;
