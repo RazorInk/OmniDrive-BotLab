@@ -1,4 +1,4 @@
-#include <mbot/serialLinkCommon.hpp>
+#include <common/serialLinkCommon.hpp>
 #include <mbot/kinematics.hpp>
 #define PI 3.14159265358979323846
 #define TANSPEED_TO_MOTORSPEED 38.96113f // number of (encoder counts per tstep) per (m/s)

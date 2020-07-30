@@ -51,17 +51,17 @@ $(BIN_OLED_EXAMPLE): oled_example.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
-$(BIN_SERIALLINKTX): serialLinkTx.o serialLinkCommon.o $(LIBDEPS)
+$(BIN_SERIALLINKTX): serialLinkTx.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
-$(BIN_SERIALLINKRX): serialLinkRx.o serialLinkCommon.o $(LIBDEPS)
+$(BIN_SERIALLINKRX): serialLinkRx.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
-serialLinkCommon.o : serialLinkCommon.hpp serialLinkCommon.cpp $(LIBDEPS)
-	@echo "    $@"
-	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $< $(LDFLAGS_MESSAGING)
+# serialLinkCommon.o : serialLinkCommon.hpp serialLinkCommon.cpp $(LIBDEPS)
+# 	@echo "    $@"
+# 	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $< $(LDFLAGS_MESSAGING)
 
 clean:
 	@rm -f *.o *~ *.a

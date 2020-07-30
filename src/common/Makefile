@@ -16,6 +16,7 @@ LIBCOMMON_OBJS = \
 	pg.o \
 	pose_trace.o \
 	serial.o \
+	serialLinkCommon.o \
 	ssocket.o \
 	string_util.o \
 	task_thread.o \
