@@ -140,13 +140,13 @@ endif
 # LIBDEPS=$(call libdeps, $(LDFLAGS))
 libdeps = $(filter $(wildcard $(LIB_PATH)/*.a), $(patsubst -l%, $(LIB_PATH)/lib%.a, $(sort $(filter -l%, $(1)))))
 
-# messaging
-CFLAGS_MESSAGING  := -I$(SRC_PATH) $(CFLAGS_STD)
-LDFLAGS_MESSAGING := -L$(LIB_PATH) -lmessaging $(LDFLAGS_STD)
-
 # common
 CFLAGS_COMMON  := -I$(SRC_PATH) -DCONFIG_DIR='"$(CONFIG_DIR)"'
 LDFLAGS_COMMON := -L$(LIB_PATH) -lcommon $(LDFLAGS_STD)
+
+# messaging
+CXXFLAGS_MESSAGING  := -I$(SRC_PATH) $(CXXFLAGS_STD)
+LDFLAGS_MESSAGING := -L$(LIB_PATH) -lmessaging $(LDFLAGS_STD)
 
 # mapping
 CFLAGS_MAPPING  := -I$(SRC_PATH) $(CFLAGS_STD)

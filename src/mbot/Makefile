@@ -1,8 +1,8 @@
 include ../common.mk
 
 CFLAGS  =  $(CFLAGS_STD)  $(CFLAGS_COMMON)  $(CFLAGS_LCMTYPES) -O3
-CXXFLAGS = $(CXXFLAGS_STD) $(CFLAGS_COMMON)  $(CFLAGS_LCMTYPES) -O3
-LDFLAGS = $(LDFLAGS_STD) $(LDFLAGS_COMMON) $(LDFLAGS_LCMTYPES) $(LDFLAGS_RPLIDAR)
+CXXFLAGS = $(CXXFLAGS_STD) $(CXXFLAGS_MESSAGING) $(CFLAGS_COMMON)  $(CFLAGS_LCMTYPES) -O3
+LDFLAGS = $(LDFLAGS_STD) $(LDFLAGS_MESSAGING) $(LDFLAGS_COMMON) $(LDFLAGS_LCMTYPES) $(LDFLAGS_RPLIDAR)
 LIBDEPS = $(call libdeps, $(LDFLAGS))
 
 BIN_DRIVE_SQUARE = $(BIN_PATH)/drive_square
@@ -53,15 +53,15 @@ $(BIN_OLED_EXAMPLE): oled_example.o $(LIBDEPS)
 
 $(BIN_SERIALLINKTX): serialLinkTx.o serialLinkCommon.o $(LIBDEPS)
 	@echo "    $@"
-	@$(CXX) -o $@ $^ $(LDFLAGS) $(CXXFLAGS)
+	@$(CXX) -o $@ $^ $(LDFLAGS)
 
 $(BIN_SERIALLINKRX): serialLinkRx.o serialLinkCommon.o $(LIBDEPS)
 	@echo "    $@"
-	@$(CXX) -o $@ $^ $(LDFLAGS) $(CXXFLAGS)
+	@$(CXX) -o $@ $^ $(LDFLAGS)
 
 serialLinkCommon.o : serialLinkCommon.hpp serialLinkCommon.cpp $(LIBDEPS)
 	@echo "    $@"
-	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $<
+	@$(CXX) $(CXXFLAGS) $(CFLAGS_LCMTYPES) -c $< $(LDFLAGS_MESSAGING)
 
 clean:
 	@rm -f *.o *~ *.a
