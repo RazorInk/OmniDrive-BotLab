@@ -36,7 +36,7 @@ BotGui::BotGui(lcm::LCM* lcmInstance, int argc, char** argv, int widthInPixels, 
 {
     assert(lcmInstance_);
     
-    odometry_.x = odometry_.y = odometry_.psi = 0.0;
+    odometry_.x = odometry_.y = odometry_.theta = 0.0;
     slamPose_.x = slamPose_.y = slamPose_.theta = 0.0;
     
     laser_.num_ranges = 0;
@@ -89,7 +89,7 @@ int BotGui::onMouseEvent(vx_layer_t* layer,
         pose_xyt_t odomPose;
         odomPose.x = odometry_.x;
         odomPose.y = odometry_.y;
-        odomPose.theta = odometry_.psi;
+        odomPose.theta = odometry_.theta;
         
         pose_xyt_t target;
         target.x = worldPoint.x;
@@ -360,7 +360,7 @@ void BotGui::handleOdometry(const lcm::ReceiveBuffer* rbuf, const std::string& c
     odomPose.utime = odom->utime;
     odomPose.x = odom->x;
     odomPose.y = odom->y;
-    odomPose.theta = odom->psi;
+    odomPose.theta = odom->theta;
     addPose(odomPose, channel);
 }
 

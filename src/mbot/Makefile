@@ -58,6 +58,10 @@ $(BIN_SERIALLINKTX): serialLinkTx.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)
 
+$(BIN_SERIALLINKRX): serialLinkRx.o $(LIBDEPS)
+	@echo "    $@"
+	@$(CXX) -o $@ $^ $(LDFLAGS)
+
 $(BIN_PID_TUNER): pid_tuner.o $(LIBDEPS)
 	@echo "    $@"
 	@$(CXX) -o $@ $^ $(LDFLAGS)

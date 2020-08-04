@@ -38,13 +38,13 @@ Pose interpolate_pose_by_time(int64_t time, const Pose& before, const Pose& afte
     // Assume a constant velocity
     double xStep     = (after.x - before.x) * interpolateRatio;
     double yStep     = (after.y - before.y) * interpolateRatio;
-    double thetaStep = angle_diff(after.psi, before.psi) * interpolateRatio;
+    double thetaStep = angle_diff(after.theta, before.theta) * interpolateRatio;
     
     Pose interpolated;
     interpolated.utime = time;
     interpolated.x     = before.x + xStep;
     interpolated.y     = before.y + yStep;
-    interpolated.psi = angle_sum(before.psi, thetaStep);
+    interpolated.theta = angle_sum(before.theta, thetaStep);
     
     return interpolated;
 }

@@ -1,5 +1,5 @@
 #include <common/serialLinkCommon.hpp>
-#include <mbot/kinematics.hpp>
+#include <common/kinematics.hpp>
 #define PI 3.14159265358979323846
 #define TANSPEED_TO_MOTORSPEED 38.96113f // number of (encoder counts per tstep) per (m/s)
 Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
@@ -8,7 +8,7 @@ Messaging OmnibotMessaging(&sendMessageUART, &rxMsgCallback);
 class SpeedCommandHandler{
 	private:
 	Kinematics kin_;
-	float psi_;
+	float theta_;
 
 	float vx_gbl_;
 	float vy_gbl_;
@@ -16,8 +16,8 @@ class SpeedCommandHandler{
 
 	void send_speed_command(float vx_gbl, float vy_gbl, float wz_gbl) {
 		// TODO: verify this is the right transform
-		float vx_lcl =   vx_gbl * cos(psi_) + vy_gbl * sin(psi_);
-		float vy_lcl = - vx_gbl * sin(psi_) + vy_gbl * cos(psi_);
+		float vx_lcl =   vx_gbl * cos(theta_) + vy_gbl * sin(theta_);
+		float vy_lcl = - vx_gbl * sin(theta_) + vy_gbl * cos(theta_);
 
 		Kinematics::KiwiVels kiwi_vel = 
 			kin_.forwardKinematicsLocal(vx_lcl, vy_lcl, wz_gbl);
@@ -111,7 +111,7 @@ class SpeedCommandHandler{
 		const std::string & chan,
 		const odometry_t *lcmMsg) {
 		
-		psi_ = lcmMsg->psi;
+		theta_ = lcmMsg->theta;
 		send_speed_command(vx_gbl_, vy_gbl_, wz_gbl_);
 	}
 };
@@ -149,7 +149,7 @@ int main (int argc, char *argv[]) {
 
 	while(0 == lcm.handle()){
 		// define a timeout (for erroring out) and the delay time
-		usleep(1E6/80);
+		// usleep(1E6/80);
 	}
 
   return 0 ;

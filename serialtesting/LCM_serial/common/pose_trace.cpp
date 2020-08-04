@@ -12,7 +12,7 @@ PoseTrace::PoseTrace(void)
 {
     frameTransform_.x = 0.0f;
     frameTransform_.y = 0.0f;
-    frameTransform_.psi = 0.0f;
+    frameTransform_.theta = 0.0f;
 }
 
     
@@ -91,22 +91,22 @@ void PoseTrace::setReferencePose(const pose_xyt_t& initialInReferenceFrame)
             << " coordinate transform for the initial pose.\n";
         initialPose.x = 0.0f;
         initialPose.y = 0.0f;
-        initialPose.psi = 0.0f;
+        initialPose.theta = 0.0f;
     }
     else 
     {
         initialPose.x = trace_.front().x;
         initialPose.y = trace_.front().y;
-        initialPose.psi = trace_.front().psi;
+        initialPose.theta = trace_.front().theta;
     }
     
-    double deltaTheta = initialInReferenceFrame.psi - initialPose.psi;
+    double deltaTheta = initialInReferenceFrame.theta - initialPose.theta;
     double xRotated = initialPose.x * std::cos(deltaTheta) - initialPose.y * std::sin(deltaTheta);
     double yRotated = initialPose.x * std::sin(deltaTheta) + initialPose.y * std::cos(deltaTheta);
     
     frameTransform_.x = initialInReferenceFrame.x - xRotated;
     frameTransform_.y = initialInReferenceFrame.y - yRotated;
-    frameTransform_.psi = deltaTheta;
+    frameTransform_.theta = deltaTheta;
     
     for(auto& p : trace_)
     {
@@ -120,9 +120,9 @@ pose_xyt_t apply_frame_transform(const pose_xyt_t& pose, const pose_xyt_t& trans
     pose_xyt_t newPose;
     newPose.utime = pose.utime;
     
-    newPose.x = (pose.x * std::cos(transform.psi) - pose.y * std::sin(transform.psi)) + transform.x;
-    newPose.y = (pose.x * std::sin(transform.psi) + pose.y * std::cos(transform.psi)) + transform.y;
-    newPose.psi = wrap_to_pi(pose.psi + transform.psi);
+    newPose.x = (pose.x * std::cos(transform.theta) - pose.y * std::sin(transform.theta)) + transform.x;
+    newPose.y = (pose.x * std::sin(transform.theta) + pose.y * std::cos(transform.theta)) + transform.y;
+    newPose.theta = wrap_to_pi(pose.theta + transform.theta);
     
     return newPose;
 }

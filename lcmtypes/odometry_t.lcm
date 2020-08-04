@@ -4,7 +4,7 @@ struct odometry_t
 
     float x;
     float y;
-    float psi;
+    float theta;
 
     float v_x;
     float v_y;

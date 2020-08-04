@@ -80,9 +80,9 @@ public:
 			pose_xyt_t target = targets_.back();
 			// Convert odometry to the global coordinates
 			pose_xyt_t pose = currentPose();
-			double targetHeading = target.psi;
-			double error = angle_diff(targetHeading, pose.psi);
-			std::cout << "targetHeading: " << targetHeading << ", pose Theta: " << pose.psi << std::endl;
+			double targetHeading = target.theta;
+			double error = angle_diff(targetHeading, pose.theta);
+			std::cout << "targetHeading: " << targetHeading << ", pose Theta: " << pose.theta << std::endl;
 			std::cout << "Angle error:" << error << '\n';
 
 	    float turnspeed = kTurnSpeed;
@@ -108,8 +108,8 @@ public:
 	    float dX = target.x - pose.x;
 	    float dY = target.y - pose.y;
 
-	    float dx = dX * cos(pose.psi) + dY * sin(pose.psi);
-	    float dy = -dX * sin(pose.psi) + dY * cos(pose.psi);
+	    float dx = dX * cos(pose.theta) + dY * sin(pose.theta);
+	    float dy = -dX * sin(pose.theta) + dY * cos(pose.theta);
 	    float v_x = kDesiredSpeed;
 	    float v_y = kDesiredSpeed;
 
@@ -140,7 +140,7 @@ public:
 
 		std::cout << "received new path at time: " << path->utime << "\n";
 		for(auto pose : targets_) {
-				std::cout << "(" << pose.x << "," << pose.y << "," << pose.psi << "); ";
+				std::cout << "(" << pose.x << "," << pose.y << "," << pose.theta << "); ";
 		} std::cout << "\n";
 		assignNextTarget();
 
@@ -157,7 +157,7 @@ public:
 		const odometry_t* odometry) {
 		odomPose.x = odometry->x;
 		odomPose.y = odometry->y;
-		odomPose.psi = odometry->psi;
+		odomPose.theta = odometry->theta;
 	}
 
 private:
@@ -210,7 +210,7 @@ private:
 
 		pose.x = odomPose.x;
 		pose.y = odomPose.y;
-		pose.psi = odomPose.psi;
+		pose.theta = odomPose.theta;
 
 		return pose;
 	}

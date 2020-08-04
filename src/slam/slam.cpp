@@ -131,7 +131,7 @@ void OccupancyGridSLAM::handleOdometry(const lcm::ReceiveBuffer* rbuf, const std
     odomPose.utime = odometry->utime;
     odomPose.x = odometry->x;
     odomPose.y = odometry->y;
-    odomPose.theta = odometry->psi;
+    odomPose.theta = odometry->theta;
     odometryPoses_.addPose(odomPose);
 }
 

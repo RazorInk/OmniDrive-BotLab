@@ -5,8 +5,11 @@
 *
 *******************************************************************************/
 
+#include <mbot/mbot_channels.h>
+#include <mbot/mbot_defs.h>
 #include <lcmtypes/odometry_t.hpp>
 #include <lcmtypes/omnibot_encoder_t.hpp>
+#include <lcmtypes/reset_odometry_t.hpp>
 #include <lcm/lcm-cpp.hpp>
 #include <math.h>
 #include <signal.h>
@@ -26,7 +29,7 @@ class Odometry
   private:
     lcm::LCM* lcm_instance_;
 		Kinematics kin_;
-    float x_, y_, psi_;
+    float x_, y_, theta_;
     int64_t last_time_;
 
   public:
@@ -38,7 +41,7 @@ class Odometry
     *******************************************************************************/
     Odometry(lcm::LCM* lcm_instance, Kinematics kin) :
 			lcm_instance_(lcm_instance), kin_(kin),
-			x_(0), y_(0), psi_(0), last_time_(0) {}
+			x_(0), y_(0), theta_(0), last_time_(0) {}
 
 
     /*******************************************************************************
@@ -58,7 +61,7 @@ class Odometry
 
 			// std::cout << "just got to handleEncoders" << std::endl;
 
-			float dx, dy, dpsi;
+			float dx, dy, dtheta;
 
 			float enc2meters = (WHEEL_DIAMETER * PI) / (GEAR_RATIO * ENCODER_RES);
 			std::cout << "odom: da, db, dc = " << msg->a_delta << ", " << msg->b_delta << ", " << msg->c_delta << std::endl;
@@ -73,17 +76,17 @@ class Odometry
 
 			dx = cart_vel.vx;
 			dy = cart_vel.vy;
-			dpsi = cart_vel.wz;
+			dtheta = cart_vel.wz;
 			// std::cout << "dx, dy = " << dx << ", " << dy << std::endl;
 
-			// std::cout << "psi_ = " << psi_ << ", dspi = " << dpsi << std::endl;
-			float angle1 = clamp_radians(psi_ + dpsi/2.0f);
-			float angle2 = clamp_radians(psi_ + dpsi/2.0f + PI/2);
+			// std::cout << "theta_ = " << theta_ << ", dspi = " << dtheta << std::endl;
+			float angle1 = clamp_radians(theta_ + dtheta/2.0f);
+			float angle2 = clamp_radians(theta_ + dtheta/2.0f + PI/2);
 
 			// TODO: verify transform
 			x_ += dx * cos(angle1) - dy * sin(angle1);
 			y_ += dx * sin(angle1) + dy * cos(angle1);
-			psi_ =  clamp_radians(psi_ + dpsi);
+			theta_ =  clamp_radians(theta_ + dtheta);
 
 			// Publish odometry msg
 			// std::cout << "about to construct lcm msg" << std::endl;
@@ -91,13 +94,23 @@ class Odometry
 			odom_msg.utime = msg->utime;
 			odom_msg.v_x = dx / DT;
 			odom_msg.v_y = dy / DT;
-			odom_msg.w_z = dpsi / DT;
+			odom_msg.w_z = dtheta / DT;
 			
 			odom_msg.x = x_;
 			odom_msg.y = y_;
-			odom_msg.psi = psi_;
-			std::cerr << x_ << ", " << y_ << ", " << psi_ << std::endl;
+			odom_msg.theta = theta_;
+			std::cerr << x_ << ", " << y_ << ", " << theta_ << std::endl;
 			lcm_instance_->publish("ODOMETRY", &odom_msg);
+    }
+
+		void handleOdometryReset(const lcm::ReceiveBuffer* buf, const std::string& channel, const reset_odometry_t* msg){
+			reset(msg->x, msg->y, msg->theta);
+    }
+
+    void reset(float x = 0, float y = 0, float theta = 0) {
+			x_ = x;
+			y_ = y;
+			theta_ = clamp_radians(theta);
     }
 
 
