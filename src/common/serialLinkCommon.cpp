@@ -5,6 +5,8 @@ extern int errno;
 void sendMessageUART(Messaging::Message* msg_buf) {
 	int fd = serialOpen("/dev/serial0", UARTBAUD);
 	write (fd, (uint8_t*)msg_buf, 64);
+	// serialFlush(fd);
+	serialClose(fd);
 	return;
 }
 
